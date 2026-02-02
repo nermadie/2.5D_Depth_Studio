@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000/api/process";
+const API_URL = "https://nermadie-2-5d-depth-studio.hf.space/api/process";
 
 // State
 let meshRenderer = null;
