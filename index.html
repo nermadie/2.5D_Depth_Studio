@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -299,7 +299,9 @@
       <div class="hero">
         <div>
           <div class="title">2.5D Depth Studio</div>
-          <div class="subtitle">Ảnh 2.5D tối giản, điều khiển mượt</div>
+          <div class="subtitle">
+            Minimal 2.5D photos, buttery-smooth controls
+          </div>
         </div>
         <div class="pill">Mesh + Layer parallax</div>
       </div>
@@ -309,8 +311,8 @@
           <div id="layersContainer"></div>
 
           <div id="placeholder">
-            <div class="pill">Drop hoặc chọn ảnh</div>
-            <div>Ảnh chân dung hoặc phong cảnh đều đẹp</div>
+            <div class="pill">Drop or choose an image</div>
+            <div>Portraits and landscapes both work great</div>
           </div>
 
           <div id="loading">
@@ -320,13 +322,15 @@
 
         <div class="panel">
           <div class="upload">
-            <button onclick="fileInput.click()">Chọn ảnh / thả vào đây</button>
+            <button onclick="fileInput.click()">
+              Choose an image / drop here
+            </button>
             <input type="file" id="fileInput" accept="image/*" />
           </div>
 
-          <div id="status">📤 Upload ảnh để bắt đầu</div>
+          <div id="status">📤 Upload an image to get started</div>
 
-          <h3>Hiệu ứng</h3>
+          <h3>Effects</h3>
           <div class="control">
             <label
               >Parallax <span class="badge" id="strengthValue">30</span></label
@@ -336,7 +340,8 @@
 
           <div class="control">
             <label
-              >Mượt <span class="badge" id="smoothnessValue">0.12</span></label
+              >Smoothness
+              <span class="badge" id="smoothnessValue">0.12</span></label
             >
             <input
               type="range"
@@ -349,8 +354,7 @@
 
           <div class="control">
             <label
-              >Chiều sâu (Z)
-              <span class="badge" id="depthValue">1.0</span></label
+              >Depth (Z) <span class="badge" id="depthValue">1.0</span></label
             >
             <input
               type="range"
@@ -363,7 +367,7 @@
 
           <div class="control">
             <label
-              >Số layer hiển thị
+              >Visible layers
               <span class="badge" id="layerCountValue">24</span></label
             >
             <input
@@ -377,10 +381,10 @@
 
           <h3>Tips</h3>
           <div class="tips">
-            <div class="tip">Giữ chuột để xoay nhẹ</div>
-            <div class="tip">Lăn chuột để zoom</div>
-            <div class="tip">Ảnh rõ foreground/background</div>
-            <div class="tip">Chụp người + hậu cảnh sâu</div>
+            <div class="tip">Move your mouse to tilt</div>
+            <div class="tip">Scroll to zoom</div>
+            <div class="tip">Clear foreground/background separation</div>
+            <div class="tip">Portraits with deep backgrounds shine</div>
           </div>
         </div>
       </div>

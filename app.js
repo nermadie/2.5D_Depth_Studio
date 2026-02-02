@@ -70,7 +70,7 @@ fileInput.addEventListener("change", async (e) => {
 
   loading.classList.add("active");
   placeholder.classList.add("hidden");
-  status.textContent = "🔄 Đang xử lý ảnh với AI...";
+  status.textContent = "🔄 Processing your image with AI...";
   layersContainer.innerHTML = "";
 
   try {
@@ -85,21 +85,21 @@ fileInput.addEventListener("change", async (e) => {
     const data = await response.json();
 
     if (data.success) {
-      status.textContent = "✅ Hoàn tất! Di chuyển chuột để xem hiệu ứng 3D";
+      status.textContent = "✅ Done! Move your mouse to see the 3D effect";
 
-      // Sử dụng mesh rendering nếu có depth data
+      // Prefer mesh rendering when depth data is available
       if (data.use_mesh && data.depth_data && window.Mesh3DRenderer) {
         await initMeshRenderer(data);
       } else {
         await initLayers(data.layers);
       }
     } else {
-      status.textContent = "❌ Lỗi: " + data.error;
+      status.textContent = "❌ Error: " + data.error;
       placeholder.classList.remove("hidden");
     }
   } catch (error) {
     status.textContent =
-      "❌ Không thể kết nối backend. Hãy chắc server đang chạy!";
+      "❌ Cannot reach the backend. Make sure the server is running!";
     placeholder.classList.remove("hidden");
     console.error("Error:", error);
   } finally {
@@ -116,7 +116,7 @@ async function initMeshRenderer(data) {
   // Validate depth data
   if (!data.depth_data || !Array.isArray(data.depth_data)) {
     console.error("Invalid depth_data from backend:", data.depth_data);
-    status.textContent = "❌ Lỗi: Depth data không hợp lệ";
+    status.textContent = "❌ Error: invalid depth data";
     return;
   }
 
@@ -217,11 +217,11 @@ viewer.addEventListener("mousemove", (e) => {
   const centerX = rect.width / 2;
   const centerY = rect.height / 2;
 
-  // Normalize to -1 to 1, với easing curve
+  // Normalize to -1..1 with an easing curve
   targetMouseX = (e.clientX - rect.left - centerX) / centerX;
   targetMouseY = (e.clientY - rect.top - centerY) / centerY;
 
-  // Apply ease curve cho natural feeling
+  // Apply ease curve for a more natural feel
   targetMouseX =
     easeInOutQuad(Math.abs(targetMouseX)) * Math.sign(targetMouseX);
   targetMouseY =
@@ -285,12 +285,12 @@ function easeInOutQuad(t) {
 function animate() {
   if (!isActive) return;
 
-  // Smooth interpolation với momentum
+  // Smooth interpolation with momentum
   const smoothFactor = config.smoothness;
   currentMouseX += (targetMouseX - currentMouseX) * smoothFactor;
   currentMouseY += (targetMouseY - currentMouseY) * smoothFactor;
 
-  // Stop animation khi gần center
+  // Stop animation when close to center
   if (Math.abs(currentMouseX) < 0.001 && Math.abs(targetMouseX) < 0.001) {
     currentMouseX = 0;
   }
@@ -298,7 +298,7 @@ function animate() {
     currentMouseY = 0;
   }
 
-  // Update layers với improved parallax
+  // Update layers with improved parallax
   layers.forEach((layer, index) => {
     // Facebook-style depth-based movement
     const depthMultiplier = layer.depth;
@@ -314,7 +314,7 @@ function animate() {
     // Scale - closer layers slightly bigger
     const scale = 1.01 + layer.depth * 0.01;
 
-    // Apply transform với hardware acceleration
+    // Apply transform with hardware acceleration
     layer.element.style.transform = `
             translate3d(${parallaxX}px, ${parallaxY}px, ${depthZ}px)
             scale(${scale})
@@ -382,20 +382,20 @@ document.addEventListener("keydown", (e) => {
 console.log(`
 🎨 Facebook 3D Photo Effect - Improved Version
 
-Cải tiến:
-✅ Depth estimation chính xác hơn
-✅ Layer separation thông minh hơn
+Improvements:
+✅ More accurate depth estimation
+✅ Smarter layer separation
 ✅ Edge-aware inpainting
 ✅ Soft alpha blending
 ✅ Smooth animation
 ✅ Touch & gyroscope support
 
-Phím tắt:
-- Arrow Up/Down: Điều chỉnh độ mạnh
-- R: Reset về center
+Shortcuts:
+- Arrow Up/Down: Adjust strength
+- R: Reset to center
 
-Upload ảnh để bắt đầu!
+Upload an image to get started!
 `);
 
 // Initialize
-status.textContent = "📤 Upload ảnh để bắt đầu";
+status.textContent = "📤 Upload an image to get started";

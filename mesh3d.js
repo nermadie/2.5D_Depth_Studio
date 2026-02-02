@@ -17,10 +17,10 @@ class Mesh3DRenderer {
     this.isActive = false;
 
     this.config = {
-      depthScale: 60, // Tăng độ sâu để background variation rõ ràng hơn
-      rotationSpeed: 0.08, // Tốc độ xoay
-      maxRotation: 0.25, // Góc xoay tối đa (radian)
-      segments: 128, // Tăng segments để chi tiết hơn
+      depthScale: 60, // Increase depth so background variation is more visible
+      rotationSpeed: 0.08, // Rotation smoothing speed
+      maxRotation: 0.25, // Max rotation angle (radians)
+      segments: 128, // Increase segments for more detail
     };
 
     this.depthIntensity = 1.0;
@@ -34,14 +34,14 @@ class Mesh3DRenderer {
     // Setup Three.js scene
     this.scene = new THREE.Scene();
 
-    // Camera with perspective - điều chỉnh để fit ảnh
+    // Camera with perspective - tuned to fit the image
     const aspect = width / height;
     this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 5000);
 
-    // Tính toán camera position để ảnh vừa khung
+    // Compute camera position so the image fits the viewport
     const fov = this.camera.fov * (Math.PI / 180);
     const cameraZ = Math.abs(height / 2 / Math.tan(fov / 2));
-    this.camera.position.z = cameraZ * 1.5; // Tăng buffer để thấy toàn bộ ảnh
+    this.camera.position.z = cameraZ * 1.5; // Add buffer to see the full image
 
     // Renderer
     this.renderer = new THREE.WebGLRenderer({
@@ -55,11 +55,11 @@ class Mesh3DRenderer {
     let renderWidth, renderHeight;
 
     if (aspect > containerAspect) {
-      // Image rộng hơn container
+      // Image is wider than the container
       renderWidth = container.width;
       renderHeight = container.width / aspect;
     } else {
-      // Image cao hơn container
+      // Image is taller than the container
       renderHeight = container.height;
       renderWidth = container.height * aspect;
     }
@@ -67,11 +67,11 @@ class Mesh3DRenderer {
     this.renderer.setSize(renderWidth, renderHeight);
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
-    // Clear container và thêm canvas
+    // Clear container and mount the canvas
     this.container.innerHTML = "";
     this.container.appendChild(this.renderer.domElement);
 
-    // Thêm zoom controls
+    // Add zoom controls
     this.setupZoomControls();
 
     // Load image texture
@@ -107,7 +107,7 @@ class Mesh3DRenderer {
       e.preventDefault();
       const delta = e.deltaY > 0 ? 1.1 : 0.9;
       this.zoomLevel *= delta;
-      this.zoomLevel = Math.max(0.5, Math.min(3.0, this.zoomLevel)); // Giới hạn zoom 0.5x - 3x
+      this.zoomLevel = Math.max(0.5, Math.min(3.0, this.zoomLevel)); // Clamp zoom: 0.5x - 3x
     });
   }
 
@@ -122,7 +122,7 @@ class Mesh3DRenderer {
     const segments = this.config.segments;
     const geometry = new THREE.PlaneGeometry(width, height, segments, segments);
 
-    // Kiểm tra depthData có hợp lệ không
+    // Validate depthData
     if (
       !this.depthData ||
       !Array.isArray(this.depthData) ||
@@ -132,7 +132,7 @@ class Mesh3DRenderer {
       return;
     }
 
-    // Áp dụng depth vào vertices
+    // Apply depth to vertices
     const vertices = geometry.attributes.position.array;
     const depthHeight = this.depthData.length;
     const depthWidth = this.depthData[0]?.length || 0;
@@ -196,7 +196,7 @@ class Mesh3DRenderer {
       (this.targetRotationY - this.currentRotationY) *
       this.config.rotationSpeed;
 
-    // Apply rotation và zoom to mesh
+    // Apply rotation and zoom to the mesh
     if (this.mesh) {
       this.mesh.rotation.x = this.currentRotationX;
       this.mesh.rotation.y = this.currentRotationY;

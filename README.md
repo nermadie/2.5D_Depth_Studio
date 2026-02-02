@@ -1,88 +1,88 @@
 # Frontend — 2.5D Depth Studio
 
-Frontend là static site (HTML/CSS/JS) để upload ảnh và render hiệu ứng 2.5D theo 2 chế độ:
+This frontend is a static site (HTML/CSS/JS) that uploads an image and renders a 2.5D effect in two modes:
 
-- **Layer parallax** (nhiều lớp PNG RGBA)
-- **Mesh displacement** (Three.js) dựa trên `depth_data`
+- **Layer parallax** (multiple RGBA PNG layers)
+- **Mesh displacement** (Three.js) driven by `depth_data`
 
 ---
 
-## Ảnh minh hoạ
+## Images
 
-![Demo](https://res.cloudinary.com/dtwrwvffl/image/upload/v1770058015/Screenshot_2026-02-03_014456_eo4ydi.png)
-![Original](https://res.cloudinary.com/dtwrwvffl/image/upload/v1770058055/young-man-singing-at-rock-concer_oztyhl.jpg)
+![Demo output](https://res.cloudinary.com/dtwrwvffl/image/upload/v1770058015/Screenshot_2026-02-03_014456_eo4ydi.png)
+![Original input](https://res.cloudinary.com/dtwrwvffl/image/upload/v1770058055/young-man-singing-at-rock-concer_oztyhl.jpg)
 
 ---
 
 ## Links
 
-- Demo (deploy): <http://25dimage.minhtran.tech/>
+- Live demo: <http://25dimage.minhtran.tech/>
 - Backend endpoint: <https://nermadie-2-5d-depth-studio.hf.space/api/process>
 - Hugging Face Spaces: <https://huggingface.co/spaces/nermadie/2.5D_Depth_Studio>
 
 ---
 
-## Chạy local
+## Run locally
 
-### Cách 1: chạy bằng static server (khuyến nghị)
+### Option 1: static server (recommended)
 
 ```bash
 cd frontend
 python -m http.server 5173
 ```
 
-Mở `http://localhost:5173`.
+Open `http://localhost:5173`.
 
 ---
 
-## Cấu hình backend URL
+## Configure the backend URL
 
-Frontend gọi API qua biến `API_URL` trong `app.js`.
+The frontend calls the API via the `API_URL` constant in `app.js`.
 
-Hiện tại trong source đã set sẵn:
+The current source is set to:
 
 - `https://nermadie-2-5d-depth-studio.hf.space/api/process`
 
-- Dùng backend local:
+- Use a local backend:
   - `http://localhost:8000/api/process`
 
-- Dùng Hugging Face Spaces:
-  - URL Spaces của bạn + `/api/process`
+- Use Hugging Face Spaces:
+  - your Space URL + `/api/process`
 
 ---
 
-## Kỹ thuật render (chi tiết)
+## Rendering details (technical)
 
 ### 1) Mesh displacement (Three.js)
 
-Nếu backend trả `use_mesh: true` và có `depth_data`, frontend ưu tiên render mesh:
+If the backend returns `use_mesh: true` and includes `depth_data`, the frontend will prefer mesh rendering:
 
-- Tạo plane mesh với nhiều segments.
-- Map từng vertex tới `depth_data` và dịch chuyển trục Z theo depth.
-- Texture là ảnh gốc → xoay nhẹ theo chuột để tạo cảm giác khối.
+- Build a plane mesh with many segments.
+- Map each vertex to `depth_data` and displace the Z axis by depth.
+- Use the original image as a texture → subtle rotation from mouse movement creates the 3D feel.
 
-Trong code: `Mesh3DRenderer` (file `mesh3d.js`).
+In code: `Mesh3DRenderer` (file `mesh3d.js`).
 
 ### 2) Layer parallax (CSS layers)
 
-Nếu không có `depth_data`/mesh renderer, frontend fallback sang layers:
+If `depth_data` / the mesh renderer is not available, the frontend falls back to layer rendering:
 
-- Xếp các layer theo `index` (background → foreground).
-- Nếu backend trả quá nhiều layer, slider “Số layer hiển thị” sẽ pick đều theo bước (để vẫn giữ dải depth).
-- Mỗi layer dịch chuyển theo chuột với hệ số theo `depth`.
-
----
-
-## Điều khiển trong UI
-
-- **Parallax**: độ lệch layer theo chuột (cảm giác nổi khối)
-- **Mượt (smoothness)**: độ trễ nội suy khi di chuyển
-- **Chiều sâu (Z)**: tăng/giảm cường độ chiều sâu
-- **Số layer hiển thị**: giảm để nhẹ máy, tăng để chi tiết
+- Sort layers by `index` (background → foreground).
+- If the backend returns too many layers, the “Visible layers” slider will sample evenly (to keep the depth range).
+- Move each layer with the mouse, scaled by its `depth`.
 
 ---
 
-## Ghi chú
+## UI controls
 
-- Nếu bạn mở `index.html` trực tiếp (file://) đôi khi sẽ gặp vấn đề khi gọi API (CORS/đường dẫn). Nên chạy qua `http.server`.
-- Nếu muốn UI đẹp hơn nữa (theme switch, preset, export video/GIF), mình có thể nâng cấp tiếp.
+- **Parallax**: how far layers shift with the mouse
+- **Smoothness**: interpolation lag while moving
+- **Depth (Z)**: depth intensity
+- **Visible layers**: lower = faster, higher = more detail
+
+---
+
+## Notes
+
+- If you open `index.html` directly (file://), you may run into API issues (CORS/paths). Use `http.server`.
+- If you want more UI features (theme switch, presets, export video/GIF), this can be extended.
